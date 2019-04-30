@@ -1,4 +1,20 @@
 
+
+
+/*
+Put a function "startGame" here, that
+- shuffles and lays out cards
+- sets counter and stars to Zero 
+?
+
+This could also be called when "restart" is hit
+
+*/ 
+
+/* 
+* Deck of cards
+*/
+
 let cards = [
     "fa-diamond", "fa-paper-plane-o", "fa-anchor", "fa-bolt", "fa-cube", "fa-leaf", "fa-bicycle", "fa-bomb",
     "fa-diamond", "fa-paper-plane-o", "fa-anchor", "fa-bolt", "fa-cube", "fa-leaf", "fa-bicycle", "fa-bomb"    
@@ -37,35 +53,81 @@ for(i = 0; i < 16; i++) {
 }
 
 
+/* 
+* Score panel
+*/
+
+
+
 // add stars to the panel
 
 let stars = document.querySelector('.stars');
+let numberOfStars = 3;
 
-for(i = 0; i <= 7; i++) {
+for(i = 0; i < numberOfStars; i++) {
     let newStar = document.createElement("li");
     newStar.classList.add('fa');
     newStar.classList.add('fa-star');
     stars.appendChild(newStar);
 }
 
+// increase the counter for every move. 1 Move: turning two cards
+function countMoves() {
+    numberOfMoves += 1; 
+    if(numberOfMoves % 2 == 0) {
+        moveCounter.innerHTML = '<span>' + numberOfMoves/2 + ' Moves</span>';
+    }
 
-/*
-
-let myInterval = window.setInterval(removeStar, 2000);
-    
-
-
+    // decrease the star rating every x moves
+    if(numberOfMoves % 2 == 0) {
+       removeStar();
+    }
 }
 
-function stopInterval() {
+// remove stars from the panel after certain number of moves (specified in numberOfMoves-function)
+// only remove a star if stars has at least two child nodes (stars) left 
+function removeStar() {
+    // numberOfStars = stars.childNodes.length;
+    if (numberOfStars >= 2) { 
+    //   console.log('noch genug kinder da');
+        numberOfStars -=1;    
+        stars.removeChild(stars.firstElementChild);
+         
+        
+    }
+}
+
+// Timer
+
+let timer = document.querySelector('.timer');
+let timePassed = 0; // time in seconds
+let myInterval = window.setInterval(increaseTimer, 1000);
+
+
+function increaseTimer() {
+    timePassed += 1; 
+        let min = Math.floor(timePassed/60);
+        let sec = timePassed - min*60;
+
+        if(sec<10) {
+            timer.innerHTML = min +":0" + sec;
+        } else {
+            timer.innerHTML = min +":" + sec;
+        }
+}
+
+
+// for testing
+timer.addEventListener('click', stopTimer);
+
+function stopTimer() {
     clearInterval(myInterval);
 }
-    
-let myTimeOut = window.setTimeout(stopInterval, 3000);
-
-*/
 
 
+/*
+* Game play
+*/ 
 
 
 let cardArray = [];
@@ -75,6 +137,7 @@ let openCardCounter = 0;
 
 let numberOfMoves = 0;
 let moveCounter = document.querySelector('.moves');
+// let starNumber = 0;
 
 let matchList = 0;
 
@@ -105,34 +168,22 @@ function clickCard(event) {
         if (openCardCounter == 2) {
             compareCards(event);
         }
+        
 
-    }
-}
+        // TODO: Momentan wird das Popup angezeigt, bevor die zweite Karte aufgedeckt wird!
+        // vermutlich läuft repaint o.ä. danach. Wann läuft das? Lektionen über Performance..?
+              
 
-
-
-// increase the counter for every move. 1 Move: turning two cards
-function countMoves() {
-    numberOfMoves += 1; 
-    if(numberOfMoves % 2 == 0) {
-
-        moveCounter.innerHTML = '<span>' + numberOfMoves/2 + ' Moves</span>';
-    }
-
-    // decrease the star rating every x moves
-    if(numberOfMoves % 6 == 0) {
-       removeStar();
-    }
-}
-
-// remove stars from the panel after certain number of moves (specified in numberOfMoves() )
-function removeStar() {
-        if(stars.firstElementChild) {
-            // console.log(stars.firstElementChild);
-            stars.removeChild(stars.firstElementChild);
+        if (matchList == 4) { // for testing //if(matchList == cards.length)
+            gameEnd(); 
         }
 
+
+    }
 }
+
+
+
 
 // "turn" the card
 function turnCard(event) {
@@ -148,44 +199,43 @@ function compareCards(event) {
         cardArray[1].classList.add('match');
 
         matchList += 2;
+
+        console.log(matchList);
         
-        // TODO: Momentan wird das Popup angezeigt, bevor die zweite Karte aufgedeckt wird!
-        // vermutlich läuft repaint o.ä. danach. Wann läuft das? Lektionen über Performance..?
-        //if (matchList == shuffledCards.length) {
-       
-        /*
-        if (matchList == 2) { // for testing
-            gameEnd(); // or better call this from clickCard??
-        }
-        */
+
+        
     } 
 }
 
+// when 3rd card is clicked, turn first two cards over again and empty arrays of cards and symbols
+// then set open card counter back to 1
 function noMatch() {
-    // console.log(openCardCounter);
-    // when 3rd card is clicked, turn first two cards over again and empty arrays of cards and symbols, then set open card counter back to 1
-
         cardArray[0].classList.remove('open', 'show');
         cardArray[1].classList.remove('open', 'show');
         
-
     // TODO: duplicate, put this in an "initialize/reset" function?
         cardArray = [];
         symbolArray = [];
         openCardCounter = 1;
-
-
 }
 
+
+
+/************* 
+   Game end
+**************/
+
+
+
 function gameEnd() {
-    console.log('das spiel ist vorbei');
-    let result = window.confirm('hallo, deine Punkte sind, deine Zeit war');
+    // console.log('das spiel ist vorbei');
+    let result = window.confirm('Moves: '+ numberOfMoves/2 + ", Star Rating: " + numberOfStars);
 
     /* 
     timer stoppen
     display a message (popup?) with the final score, time, stars, asking if they want to play again 
+    //--> prevent default vom OK button? 
     */
-
 
     
 
@@ -193,10 +243,14 @@ function gameEnd() {
 }
 
 
-
 /*let deck = document.querySelector('.deck');*/ // this code already exists above
 deck.addEventListener('click', clickCard);
 
+
+
+/* 
+* Restart
+*/
 
 function restart() {
    
@@ -206,8 +260,10 @@ let allCards = deck.querySelectorAll('li.card');
         element.classList.remove('open', 'show');
     })
 
+    // shuffle cards!! 
+
     numberOfMoves = 0;
-    moveCounter.innerHTML = '<span>' + numberOfMoves + '</span>';
+    moveCounter.innerHTML = '<span>' + numberOfMoves/2 + ' Moves</span>' // duplicate... 
 
 
     // TODO: duplicate, put this in an "initialize/reset" function?
@@ -233,9 +289,7 @@ restartButton.addEventListener('click', restart);
 
 /* Ideas
 
-Sterne: 
-Append Child, set inner HTML
-nach einigen Zügen: remove child
+
 
 Es gibt einigen Initialisierungscode, der doppelt vorkommt, einmal am Spielanfang, und dann bei Restart: 
 
@@ -256,6 +310,7 @@ Diesen in eine Funktion auslagern?
 NEin: Hier werden die Variablen initialisiert, später werden sie nur geleert!
 
 
+
 Wie geht:
 - Timer (setTimeout?)? --> siehe Lektion unter Performance!
 - Popups anzeigen?
@@ -270,7 +325,7 @@ Do I need the click counter? use cardArray instead?
  * if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  * Popup that displays time, stars, asking if they want to play again 
  * timer
- * star rating decreases
+
 
  */
 
@@ -296,6 +351,7 @@ Do I need the click counter? use cardArray instead?
  *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *   
+ * star rating decreases
  */
 
 

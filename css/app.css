@@ -87,7 +87,7 @@ h1 {
 
 .score-panel {
     text-align: left;
-    width: 345px;
+    width: 500px;
     margin-bottom: 10px;
 }
 
@@ -99,10 +99,25 @@ h1 {
     
     width: 150px;
 }
-
 .score-panel .stars li {
     list-style: none;
     display: inline-block;
+}
+
+.score-panel .moves {
+    width: 150px;
+    display: inline-block;
+
+
+}
+
+.score-panel .timer {
+    width: 150px;
+    display: inline-block;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 22px;
+    font-weight: bold;
+
 }
 
 .score-panel .restart {
@@ -110,6 +125,4 @@ h1 {
     cursor: pointer;
 }
 
-.moves {
-    /* float: right;*/
-}
+
