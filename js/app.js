@@ -20,18 +20,53 @@ function shuffle(array) {
     return array;
 }
 
+/* shuffle cards */
 
 // let shuffledCards = shuffle(cards);
 let shuffledCards = cards; // unshuffled cards for testing purposes
 
 let deck = document.querySelector('.deck');
 
-    
+
+/* add cards */
+
 // doesn't work with Template Literal: deck.insertAdjacentHTML('beforeend', '<li class="card open show"><i class="fa $shuffledCards[i]"></i></li>')
 // or use append Child?
 for(i = 0; i < 16; i++) {
-    deck.insertAdjacentHTML('beforeend', '<li class="card"><i class="fa ' +shuffledCards[i] +'"></i></li>')
+    deck.insertAdjacentHTML('beforeend', '<li class="card"><i class="fa ' +shuffledCards[i] +'"></i></li>');
 }
+
+
+// add stars to the panel
+
+let stars = document.querySelector('.stars');
+
+for(i = 0; i <= 7; i++) {
+    let newStar = document.createElement("li");
+    newStar.classList.add('fa');
+    newStar.classList.add('fa-star');
+    stars.appendChild(newStar);
+}
+
+
+/*
+
+let myInterval = window.setInterval(removeStar, 2000);
+    
+
+
+}
+
+function stopInterval() {
+    clearInterval(myInterval);
+}
+    
+let myTimeOut = window.setTimeout(stopInterval, 3000);
+
+*/
+
+
+
 
 let cardArray = [];
 let symbolArray = [];
@@ -52,6 +87,9 @@ function clickCard(event) {
         openCardCounter += 1;
 
         countMoves();  // increase visible counter on page
+
+
+        // removeStar(); // called by countMoves
         
         turnCard(event); 
 
@@ -71,10 +109,29 @@ function clickCard(event) {
     }
 }
 
-// increase the counter
+
+
+// increase the counter for every move. 1 Move: turning two cards
 function countMoves() {
     numberOfMoves += 1; 
-    moveCounter.innerHTML = '<span>' + numberOfMoves + '</span>';
+    if(numberOfMoves % 2 == 0) {
+
+        moveCounter.innerHTML = '<span>' + numberOfMoves/2 + ' Moves</span>';
+    }
+
+    // decrease the star rating every x moves
+    if(numberOfMoves % 6 == 0) {
+       removeStar();
+    }
+}
+
+// remove stars from the panel after certain number of moves (specified in numberOfMoves() )
+function removeStar() {
+        if(stars.firstElementChild) {
+            // console.log(stars.firstElementChild);
+            stars.removeChild(stars.firstElementChild);
+        }
+
 }
 
 // "turn" the card
@@ -86,49 +143,51 @@ function turnCard(event) {
 
 // check for matching symbols
 function compareCards(event) {
-        if (symbolArray[0] == symbolArray[1]) {
-            cardArray[0].classList.add('match');
-            cardArray[1].classList.add('match');
+    if (symbolArray[0] == symbolArray[1]) {
+        cardArray[0].classList.add('match');
+        cardArray[1].classList.add('match');
 
-            matchList += 2;
-
-            // console.log(cardArray);
-            
-            
-            console.log(matchList);
-            console.log(shuffledCards.length);
-
-            
-            //if (matchList == shuffledCards.length) {
-                if (matchList == 2) { // for testing
-
-                gameEnd();
-
-            }
-            
-        } 
+        matchList += 2;
+        
+        // TODO: Momentan wird das Popup angezeigt, bevor die zweite Karte aufgedeckt wird!
+        // vermutlich läuft repaint o.ä. danach. Wann läuft das? Lektionen über Performance..?
+        //if (matchList == shuffledCards.length) {
+       
+        /*
+        if (matchList == 2) { // for testing
+            gameEnd(); // or better call this from clickCard??
+        }
+        */
+    } 
 }
 
 function noMatch() {
     // console.log(openCardCounter);
     // when 3rd card is clicked, turn first two cards over again and empty arrays of cards and symbols, then set open card counter back to 1
+
         cardArray[0].classList.remove('open', 'show');
         cardArray[1].classList.remove('open', 'show');
+        
+
+    // TODO: duplicate, put this in an "initialize/reset" function?
         cardArray = [];
         symbolArray = [];
         openCardCounter = 1;
+
+
 }
 
 function gameEnd() {
     console.log('das spiel ist vorbei');
+    let result = window.confirm('hallo, deine Punkte sind, deine Zeit war');
+
+    /* 
+    timer stoppen
+    display a message (popup?) with the final score, time, stars, asking if they want to play again 
+    */
 
 
-// timer stoppen
-
-    /*
-    * if all cards have matched, display a message with the final score
-    * Popup that displays time, stars, asking if they want to play again 
-    * */
+    
 
 
 }
@@ -147,18 +206,26 @@ let allCards = deck.querySelectorAll('li.card');
         element.classList.remove('open', 'show');
     })
 
-    // duplicate, put this in an "initialize" function?
+    numberOfMoves = 0;
+    moveCounter.innerHTML = '<span>' + numberOfMoves + '</span>';
+
+
+    // TODO: duplicate, put this in an "initialize/reset" function?
     cardArray = [];
     symbolArray = [];
     openCardCounter = 0;
-    numberOfMoves = 0;
-    moveCounter.innerHTML = '<span>' + numberOfMoves + '</span>';
+   
   
     /*
     Timer auf Null
     Sterne auf Null
     */
 }
+
+
+
+
+
 
 const restartButton = document.querySelector('.restart');
 restartButton.addEventListener('click', restart);
@@ -172,6 +239,7 @@ nach einigen Zügen: remove child
 
 Es gibt einigen Initialisierungscode, der doppelt vorkommt, einmal am Spielanfang, und dann bei Restart: 
 
+
 let cardArray = [];
 let symbolArray = [];
 
@@ -184,12 +252,15 @@ let matchList = 0;
 
 Zeit auf Null, Sterne auf Null 
 
-Diesen in eine Funktion auslagern 
+Diesen in eine Funktion auslagern?
+NEin: Hier werden die Variablen initialisiert, später werden sie nur geleert!
 
 
 Wie geht:
-- Timer (setTimeout?)?
+- Timer (setTimeout?)? --> siehe Lektion unter Performance!
 - Popups anzeigen?
+
+Do I need the click counter? use cardArray instead?
 
 */
 
