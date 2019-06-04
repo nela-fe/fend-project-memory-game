@@ -33,16 +33,7 @@ function initializeCards() {
     let shuffledCards = shuffle(cards);
     // let shuffledCards = cards; // unshuffled cards for testing purposes
 
-    /*
-    // add cards to deck, old version // TODO: better use append Child and a document fragment?
-     for(i = 0; i < 16; i++) {
-    // deck.insertAdjacentHTML('beforeend', '<li class="card"><i class="fa ' +shuffledCards[i] +'"></i></li>');
-
-    // for testing use this line, also change lines in "thirdCard()", "turnCard()" and "restart()"
-    deck.insertAdjacentHTML('beforeend', '<li class="card show"><i class="fa ' +shuffledCards[i] +'"></i></li>');
-    */
-
-    // add cards to deck, new version. Much longer, but better? //
+    // add cards to deck
     let myCardFrag = document.createDocumentFragment();
 
     for(i = 0; i < 16; i++) {

@@ -1,5 +1,8 @@
 # Memory Game Project
 
+Project built for Udacity Front-End Web Developer Nanodegree
+Demo: https://nela-fe.github.io/Memory-Game/
+
 ## Installation
 
 Download the files and open "index.html" in your browser.
